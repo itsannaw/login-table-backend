@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  full_name: MyString
+  email: MyString
+  password: MyString
+  login_at: 2023-10-08 20:26:03
+  blocked: false
+
+two:
+  full_name: MyString
+  email: MyString
+  password: MyString
+  login_at: 2023-10-08 20:26:03
+  blocked: false
