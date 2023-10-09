@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  wrap_parameters :user, include: [:full_name, :email, :password, :password_confirmation]
   before_action :set_user, only: %i[ show update destroy ]
 
   # GET /users
@@ -15,6 +16,7 @@ class UsersController < ApplicationController
   # POST /users
   def create
     @user = User.new(user_params)
+    @user.blocked = false
 
     if @user.save
       render json: @user, status: :created, location: @user
@@ -45,6 +47,6 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:full_name, :email, :password, :login_at, :blocked)
+      params.require(:user).permit(:full_name, :email, :password, :password_confirmation, :login_at, :blocked)
     end
 end
