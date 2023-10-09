@@ -1,6 +1,25 @@
 class UsersController < ApplicationController
+  include RackSessionsFix
   wrap_parameters :user, include: [:full_name, :email, :password, :password_confirmation]
   before_action :set_user, only: %i[ show update destroy ]
+  before_action :process_token
+
+  def process_token
+    if request.headers['Authorization'].present?
+      begin
+        jwt_payload = JWT.decode(
+          request.headers['Authorization'].split(' ')[1].remove('"'),
+          Rails.application.credentials.devise_jwt_secret_key
+        ).first
+
+        @current_user_id = jwt_payload['id']
+      rescue JWT::ExpiredSignature, JWT::VerificationError, JWT::DecodeError
+        head :unauthorized
+      end
+    else
+      head :unauthorized
+    end
+  end
 
   # GET /users
   def index
