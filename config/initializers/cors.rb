@@ -16,7 +16,7 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
   end
 
   allow do
-    origins "https://login-table.vercel.app/"
+    origins "https://login-table.vercel.app"
     resource "*",
       headers: :any,
       methods: :any, #[:get, :post, :put, :patch, :delete, :options, :head]
