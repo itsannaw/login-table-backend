@@ -227,7 +227,7 @@ DEPENDENCIES
   devise
   devise-jwt
   jsonapi-serializer
-  pg (~> 1.5.4)
+  pg
   puma (>= 5.0)
   rack-cors
   rails (~> 7.1.0)
@@ -237,4 +237,4 @@ RUBY VERSION
    ruby 3.2.2p53
 
 BUNDLED WITH
-   2.4.10
+   2.4.20
