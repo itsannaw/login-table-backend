@@ -1,0 +1,18 @@
+databases:
+  - name: login_table_backend
+    databaseName: login_table_backend_production
+    user: login_table_user
+
+services:
+  - type: web
+    name: login_table_backend
+    runtime: ruby
+    buildCommand: "./bin/render-build.sh"
+    startCommand: "bundle exec puma -C config/puma.rb"
+    envVars:
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: login_table_backend_production
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
