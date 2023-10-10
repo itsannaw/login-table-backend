@@ -35,7 +35,7 @@ development:
   # Connect on a TCP socket. Omitted by default since the client uses a
   # domain socket that doesn't need configuration. Windows does not have
   # domain sockets, so uncomment these lines.
-  host: <%= ENV["DATABASE_HOST"] %>
+  host: <%= ENV["DATABASE_URL"] %>
 
   # The TCP port the server listens on. Defaults to 5432.
   # If your server runs on a different port number, change accordingly.
@@ -82,4 +82,4 @@ production:
   database: login_table_backend_production
   username: login_table_user
   password: <%= ENV["LOGIN_TABLE_BACKEND_DATABASE_PASSWORD"] %>
-  url: <%= ENV["DATABASE_HOST"] %>
+  url: <%= ENV["DATABASE_URL"] %>
