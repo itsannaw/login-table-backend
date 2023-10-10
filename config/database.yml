@@ -27,15 +27,15 @@ development:
   # To create additional roles in postgres see `$ createuser --help`.
   # When left blank, postgres will use the default role. This is
   # the same name as the operating system user running Rails.
-  username: <%= ENV["DATABASE_USERNAME"] %>
+  username: login_table_user
 
   # The password associated with the postgres role (username).
-  password: <%= ENV["LOGIN_TABLE_BACKEND_DATABASE_PASSWORD"] %>
+  password: 2045
 
   # Connect on a TCP socket. Omitted by default since the client uses a
   # domain socket that doesn't need configuration. Windows does not have
   # domain sockets, so uncomment these lines.
-  host: <%= ENV["DATABASE_URL"] %>
+  host: localhost
 
   # The TCP port the server listens on. Defaults to 5432.
   # If your server runs on a different port number, change accordingly.
