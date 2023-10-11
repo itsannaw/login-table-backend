@@ -1,33 +1,36 @@
 
 class Users::SessionsController < Devise::SessionsController
   include RackSessionsFix
-  respond_to :json
-  private
-  def respond_with(current_user, _opts = {})
-    render json: {
-      status: {
-        code: 200, message: 'Logged in successfully.',
-        data: { user: UserSerializer.new(current_user).serializable_hash[:data][:attributes] }
-      }
-    }, status: :ok
-  end
-  def respond_to_on_destroy
-    if request.headers['Authorization'].present?
-      jwt_payload = JWT.decode(request.headers['Authorization'].split(' ').last, Rails.application.credentials.devise_jwt_secret_key!).first
-      current_user = User.find(jwt_payload['sub'])
-    end
+  before_action :authenticate_user!, only: [:destroy] # Optional: Restrict this action to authenticated users
 
-    if current_user
-      render json: {
-        status: 200,
-        message: 'Logged out successfully.'
-      }, status: :ok
+  def create
+    user = User.find_by(email: params[:user][:email])
+    if user && user.blocked
+      render json: { error: 'Your account has been blocked. Please contact Admin Table administrator if you think this is an error.' }, status: :unauthorized
+    elsif user && user.valid_password?(params[:user][:password])
+      sign_in user
+      user.update(login_at: Time.now)
+      user.save(validate: false)
+      puts 123
+      puts user.login_at
+      render json: { token: generate_jwt(user) }
     else
-      render json: {
-        status: 401,
-        message: "Couldn't find an active session."
-      }, status: :unauthorized
+      render json: { error: 'Invalid email or password' }, status: :unauthorized
     end
   end
 
+  def destroy
+    sign_out(current_user)
+    render json: { message: 'Logged out successfully' }
+  end
+
+  private
+
+  def generate_jwt(user)
+    payload = {
+      user_id: user.id,
+      exp: 1.week.from_now.to_i
+    }
+    JWT.encode(payload, Rails.application.credentials.devise_jwt_secret_key, 'HS256')
+  end
 end

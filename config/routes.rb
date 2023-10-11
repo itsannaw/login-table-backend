@@ -10,6 +10,9 @@ Rails.application.routes.draw do
   }
 
   resources :users
+  post '/users/block', to: 'users#block_users'
+  post '/users/unblock', to: 'users#unblock_users'
+  post '/users/delete', to: 'users#delete_users'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

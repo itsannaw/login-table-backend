@@ -1,25 +1,9 @@
 class UsersController < ApplicationController
   include RackSessionsFix
+  include ProcessToken
   wrap_parameters :user, include: [:full_name, :email, :password, :password_confirmation]
-  before_action :set_user, only: %i[ show update destroy ]
+  # before_action :set_user, only: %i[ show update destroy ]
   before_action :process_token
-
-  def process_token
-    if request.headers['Authorization'].present?
-      begin
-        jwt_payload = JWT.decode(
-          request.headers['Authorization'].split(' ')[1].remove('"'),
-          Rails.application.credentials.devise_jwt_secret_key
-        ).first
-
-        @current_user_id = jwt_payload['id']
-      rescue JWT::ExpiredSignature, JWT::VerificationError, JWT::DecodeError
-        head :unauthorized
-      end
-    else
-      head :unauthorized
-    end
-  end
 
   # GET /users
   def index
@@ -27,35 +11,32 @@ class UsersController < ApplicationController
     render json: @users
   end
 
-  # GET /users/1
-  def show
-    render json: @user
-  end
-
-  # POST /users
-  def create
-    @user = User.new(user_params)
-    @user.blocked = false
-
-    if @user.save
-      render json: @user, status: :created, location: @user
+  def block_users
+    users_ids = params[:users_ids]
+    @users = User.where(id: users_ids).update_all(blocked: true)
+    if users_ids.include?(current_user.id)
+      sign_out(current_user)
+      render json: { error: 'You have been blocked!' }, status: :unauthorized
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render json: User.all
     end
   end
 
-  # PATCH/PUT /users/1
-  def update
-    if @user.update(user_params)
-      render json: @user
-    else
-      render json: @user.errors, status: :unprocessable_entity
-    end
+  def unblock_users
+    users_ids = params[:users_ids]
+    @users = User.where(id: users_ids).update_all(blocked: false)
+    render json: User.all
   end
 
-  # DELETE /users/1
-  def destroy
-    @user.destroy!
+  def delete_users
+    users_ids = params[:users_ids]
+    is_in_list = users_ids.include?(current_user.id)
+    @users = User.where(id: users_ids).destroy_all
+    if is_in_list
+      render json: { error: 'You have been deleted!' }, status: :unauthorized
+    else
+      render json: User.all
+    end
   end
 
   private
