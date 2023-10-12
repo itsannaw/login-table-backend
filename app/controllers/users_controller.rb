@@ -2,10 +2,10 @@ class UsersController < ApplicationController
   include RackSessionsFix
   include ProcessToken
   wrap_parameters :user, include: [:full_name, :email, :password, :password_confirmation]
-  # before_action :set_user, only: %i[ show update destroy ]
+
   before_action :process_token
 
-  # GET /users
+
   def index
     @users = User.all
     render json: @users
@@ -44,12 +44,12 @@ class UsersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+
     def set_user
       @user = User.find(params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
+
     def user_params
       params.require(:user).permit(:full_name, :email, :password, :password_confirmation, :login_at, :blocked)
     end
