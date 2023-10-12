@@ -11,6 +11,10 @@ class UsersController < ApplicationController
     render json: @users
   end
 
+  def name_users
+    render json: current_user.full_name
+  end
+
   def block_users
     users_ids = params[:users_ids]
     @users = User.where(id: users_ids).update_all(blocked: true)

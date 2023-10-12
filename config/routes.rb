@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users, path: '', path_names: {
     sign_in: 'login',
-    sign_out: 'logout',
     registration: 'signup'
   },
   controllers: {
@@ -9,10 +8,12 @@ Rails.application.routes.draw do
     registrations: 'users/registrations'
   }
 
-  resources :users
+  resources :users, only: [:index]
   post '/users/block', to: 'users#block_users'
   post '/users/unblock', to: 'users#unblock_users'
   post '/users/delete', to: 'users#delete_users'
+  get '/users/name_users', to: 'users#name_users'
+  delete '/users/logout', to: 'sessions#destroy'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
