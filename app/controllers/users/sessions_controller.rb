@@ -11,8 +11,6 @@ class Users::SessionsController < Devise::SessionsController
       sign_in user
       user.update(login_at: Time.now)
       user.save(validate: false)
-      puts 123
-      puts user.login_at
       render json: { token: generate_jwt(user) }
     else
       render json: { error: 'Invalid email or password' }, status: :unauthorized
